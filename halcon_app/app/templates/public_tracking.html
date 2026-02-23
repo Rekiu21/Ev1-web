@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="stack">
+    <div class="card">
+      <div class="hgroup">
+        <div>
+          <h2>Seguimiento de pedido</h2>
+          <div class="subtitle">Ingresa tu No. de cliente y No. de factura.</div>
+        </div>
+        <div class="actions">
+          <a class="btn secondary" href="/login">Dashboard</a>
+        </div>
+      </div>
+
+      {% if error %}
+        <div style="height:12px"></div>
+        <div class="error">{{ error }}</div>
+      {% endif %}
+
+      <div style="height:14px"></div>
+      <form method="post" action="/track" class="grid">
+        <div class="col-4">
+          <label>No. Cliente</label>
+          <input name="customer_number" required />
+        </div>
+        <div class="col-4">
+          <label>No. Factura</label>
+          <input name="invoice_number" required />
+        </div>
+        <div class="col-4" style="display:flex; align-items:end;">
+          <button class="btn" type="submit" style="width:100%;">Consultar</button>
+        </div>
+      </form>
+    </div>
+
+    {% if result %}
+      <div class="card">
+        <div class="hgroup">
+          <div>
+            <h3>Resultado</h3>
+            <div class="subtitle">Pedido encontrado.</div>
+          </div>
+          <div><span class="pill">{{ result.status.value }}</span></div>
+        </div>
+
+        <div style="height:12px"></div>
+        {% if result.status.value == "Delivered" and result.photo_delivered_path %}
+          <div class="help"><b>Evidencia de entrega</b></div>
+          <div style="height:10px"></div>
+          <img class="img" src="{{ result.photo_delivered_path }}" alt="Evidencia de entrega" />
+        {% elif result.status.value == "Delivered" %}
+          <div class="help">Aún no hay foto de evidencia cargada.</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

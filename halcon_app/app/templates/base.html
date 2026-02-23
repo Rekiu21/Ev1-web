@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title or "Halcón" }}</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  {% if user %}
+  <div class="topbar">
+    <div class="topbar-inner">
+      <nav class="nav">
+        <a href="/dashboard/orders">Pedidos</a>
+        {% if user.role.value in ["Sales", "Admin"] %}
+          <a href="/dashboard/deleted">Eliminados</a>
+        {% endif %}
+        {% if user.role.value == "Admin" %}
+          <a href="/dashboard/users">Usuarios</a>
+        {% endif %}
+      </nav>
+      <div class="userchip">
+        {{ user.username }} ({{ user.role.value }}) · <a href="/logout">Salir</a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="center">
+    <div class="card">
+      <div class="hgroup">
+        <div>
+          <h2 style="margin:0;">{{ title }}</h2>
+          <div class="subtitle">Código: {{ status_code }}</div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+      <div class="error">{{ message }}</div>
+
+      <div style="height:14px"></div>
+      <div class="actions">
+        <a class="btn secondary" href="/">Inicio</a>
+        <a class="btn secondary" href="/login">Login</a>
+        <a class="btn" href="/dashboard/orders">Ir a pedidos</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

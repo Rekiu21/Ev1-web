@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <div class="hgroup">
+      <div>
+        <h2>Nuevo pedido</h2>
+        <div class="subtitle">Al crear, el estatus inicia en <b>Ordered</b>.</div>
+      </div>
+      <div class="actions">
+        <a class="btn secondary" href="/dashboard/orders">Volver</a>
+      </div>
+    </div>
+
+    {% if error %}
+      <div style="height:12px"></div>
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <div style="height:14px"></div>
+    <form method="post" action="/dashboard/orders/new" class="grid">
+      <div class="col-6">
+        <label>No. Factura (consecutivo)</label>
+        <input name="invoice_number" required />
+      </div>
+      <div class="col-6">
+        <label>No. Cliente (único)</label>
+        <input name="customer_number" required />
+      </div>
+
+      <div class="col-12">
+        <label>Nombre / Razón social</label>
+        <input name="customer_name" required />
+      </div>
+
+      <div class="col-6">
+        <label>Datos fiscales</label>
+        <textarea name="fiscal_data" required></textarea>
+      </div>
+
+      <div class="col-6">
+        <label>Dirección de entrega</label>
+        <textarea name="delivery_address" required></textarea>
+      </div>
+
+      <div class="col-12">
+        <label>Notas</label>
+        <textarea name="notes"></textarea>
+      </div>
+
+      <div class="col-12 actions">
+        <button class="btn" type="submit">Crear pedido</button>
+        <a class="btn secondary" href="/dashboard/orders">Cancelar</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

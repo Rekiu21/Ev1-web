@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="stack">
+    <div class="card">
+      <div class="hgroup">
+        <div>
+          <h2>Pedidos</h2>
+          <div class="subtitle">Listado y búsqueda.</div>
+        </div>
+        <div class="actions">
+          {% if user.role.value in ["Sales", "Admin"] %}
+            <a class="btn" href="/dashboard/orders/new">Nuevo pedido</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div style="height:14px"></div>
+      <form method="get" action="/dashboard/orders" class="grid">
+        <div class="col-3">
+          <label>No. Factura</label>
+          <input name="q_invoice" value="{{ q_invoice }}" />
+        </div>
+        <div class="col-3">
+          <label>No. Cliente</label>
+          <input name="q_customer" value="{{ q_customer }}" />
+        </div>
+        <div class="col-3">
+          <label>Fecha (YYYY-MM-DD)</label>
+          <input name="q_date" value="{{ q_date }}" placeholder="2026-02-23" />
+        </div>
+        <div class="col-3">
+          <label>Estatus</label>
+          <select name="q_status">
+            <option value="">(cualquiera)</option>
+            {% for s in OrderStatus %}
+              <option value="{{ s.value }}" {% if q_status == s.value %}selected{% endif %}>{{ s.value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12 actions">
+          <button class="btn" type="submit">Buscar</button>
+          <a class="btn secondary" href="/dashboard/orders">Limpiar</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>No. Factura</th>
+              <th>No. Cliente</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Estatus</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in orders %}
+              <tr>
+                <td>{{ o.invoice_number }}</td>
+                <td>{{ o.customer_number }}</td>
+                <td style="white-space: normal; min-width: 220px;">{{ o.customer_name }}</td>
+                <td>{{ o.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td><span class="pill">{{ o.status.value }}</span></td>
+                <td><a class="btn secondary" href="/dashboard/orders/{{ o.id }}">Abrir</a></td>
+              </tr>
+            {% endfor %}
+            {% if orders|length == 0 %}
+              <tr><td colspan="6" class="help">Sin resultados.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

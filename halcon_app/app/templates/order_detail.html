@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <div class="hgroup">
+      <div>
+        <h2>Pedido #{{ order.id }}</h2>
+        <div class="subtitle">Creado: {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+      </div>
+      <div class="actions">
+        <span class="pill">{{ order.status.value }}</span>
+        <a class="btn secondary" href="/dashboard/orders">Volver</a>
+      </div>
+    </div>
+
+    {% if user.role.value in ["Sales", "Admin"] %}
+      <div style="height:14px"></div>
+      <h3 style="margin:0;">Editar datos</h3>
+      <div class="subtitle">(Ventas / Admin)</div>
+      <div style="height:12px"></div>
+      <form method="post" action="/dashboard/orders/{{ order.id }}/edit" class="grid">
+        <div class="col-6">
+          <label>No. Factura</label>
+          <input name="invoice_number" value="{{ order.invoice_number }}" required />
+        </div>
+        <div class="col-6">
+          <label>No. Cliente</label>
+          <input name="customer_number" value="{{ order.customer_number }}" required />
+        </div>
+
+        <div class="col-12">
+          <label>Nombre / Razón social</label>
+          <input name="customer_name" value="{{ order.customer_name }}" required />
+        </div>
+
+        <div class="col-6">
+          <label>Datos fiscales</label>
+          <textarea name="fiscal_data" required>{{ order.fiscal_data }}</textarea>
+        </div>
+
+        <div class="col-6">
+          <label>Dirección de entrega</label>
+          <textarea name="delivery_address" required>{{ order.delivery_address }}</textarea>
+        </div>
+
+        <div class="col-12">
+          <label>Notas</label>
+          <textarea name="notes">{{ order.notes }}</textarea>
+        </div>
+
+        <div class="col-12 actions">
+          <button class="btn" type="submit">Guardar</button>
+        </div>
+      </form>
+    {% else %}
+      <div style="height:14px"></div>
+      <h3 style="margin:0;">Datos</h3>
+      <div class="subtitle">Solo lectura</div>
+      <div style="height:12px"></div>
+      <div class="grid">
+        <div class="col-6"><b>No. Factura:</b> {{ order.invoice_number }}</div>
+        <div class="col-6"><b>No. Cliente:</b> {{ order.customer_number }}</div>
+        <div class="col-12"><b>Cliente:</b> {{ order.customer_name }}</div>
+        <div class="col-12"><b>Dirección:</b> {{ order.delivery_address }}</div>
+        <div class="col-12"><b>Notas:</b> {{ order.notes }}</div>
+      </div>
+    {% endif %}
+
+    <div style="height:18px"></div>
+    <h3 style="margin:0;">Acciones de estatus</h3>
+    <div class="subtitle">Permisos: Almacén cambia a In process/In route; Ruta sube evidencia y queda Delivered.</div>
+    <div style="height:12px"></div>
+    {% if allowed_targets|length > 0 %}
+      <form method="post" action="/dashboard/orders/{{ order.id }}/status" class="grid">
+        <div class="col-6">
+          <label>Cambiar a...</label>
+          <select name="status_value" required>
+            <option value="">(selecciona)</option>
+            {% for t in allowed_targets %}
+              <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-6" style="display:flex; align-items:end;">
+          <button class="btn secondary" type="submit" style="width:100%;">Actualizar estatus</button>
+        </div>
+      </form>
+    {% else %}
+      <div class="help">No hay cambios de estatus disponibles para tu rol en el estatus actual.</div>
+    {% endif %}
+
+    {% if user.role.value in ["Route", "Admin"] %}
+      <div style="height:18px"></div>
+      <h3 style="margin:0;">Fotos (solo Ruta)</h3>
+      <div class="subtitle">Disponibles para rol Ruta o Admin.</div>
+      <div style="height:12px"></div>
+      {% if order.status.value == "In route" %}
+        <div class="grid">
+          <div class="col-6">
+            <form method="post" action="/dashboard/orders/{{ order.id }}/upload/loaded" enctype="multipart/form-data" class="stack">
+              <div>
+                <label>Foto de unidad cargada</label>
+                <input type="file" name="photo" accept="image/*" required />
+              </div>
+              <div class="actions">
+                <button class="btn secondary" type="submit">Subir</button>
+              </div>
+            </form>
+            {% if order.photo_loaded_path %}
+              <div style="height:10px"></div>
+              <img class="img" src="{{ order.photo_loaded_path }}" alt="Unidad cargada" />
+            {% endif %}
+          </div>
+
+          <div class="col-6">
+            <form method="post" action="/dashboard/orders/{{ order.id }}/upload/delivered" enctype="multipart/form-data" class="stack">
+              <div>
+                <label>Evidencia de entrega (subir = marca Delivered)</label>
+                <input type="file" name="photo" accept="image/*" required />
+              </div>
+              <div class="actions">
+                <button class="btn" type="submit">Subir evidencia</button>
+              </div>
+            </form>
+            {% if order.photo_delivered_path %}
+              <div style="height:10px"></div>
+              <img class="img" src="{{ order.photo_delivered_path }}" alt="Evidencia entrega" />
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <div class="help">Para subir fotos, primero cambia el estatus del pedido a <b>In route</b>.</div>
+      {% endif %}
+    {% endif %}
+
+    {% if user.role.value in ["Sales", "Admin"] %}
+      <div style="height:18px"></div>
+      <form method="post" action="/dashboard/orders/{{ order.id }}/delete" onsubmit="return confirm('¿Eliminar (lógico) este pedido?');">
+        <button class="btn danger" type="submit">Eliminar (lógico)</button>
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}

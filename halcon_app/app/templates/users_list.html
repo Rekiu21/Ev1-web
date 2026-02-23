@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="stack">
+    <div class="card">
+      <div class="hgroup">
+        <div>
+          <h2>Usuarios</h2>
+          <div class="subtitle">Solo Admin puede registrar y asignar roles.</div>
+        </div>
+      </div>
+
+      {% if error %}
+        <div style="height:12px"></div>
+        <div class="error">{{ error }}</div>
+      {% endif %}
+
+      {% if notice == "user_created" %}
+        <div style="height:12px"></div>
+        <div class="pill">Usuario creado correctamente.</div>
+      {% elif notice == "role_saved" %}
+        <div style="height:12px"></div>
+        <div class="pill">Rol guardado.</div>
+      {% endif %}
+
+      <div style="height:14px"></div>
+      <h3 style="margin:0;">Registrar nuevo</h3>
+      <div class="subtitle">Crea usuarios internos por departamento.</div>
+      <div style="height:12px"></div>
+      <form method="post" action="/dashboard/users/new" class="grid">
+        <div class="col-4">
+          <label>Usuario</label>
+          <input name="username" required />
+        </div>
+        <div class="col-4">
+          <label>Contraseña</label>
+          <input name="password" type="password" required />
+        </div>
+        <div class="col-4">
+          <label>Rol</label>
+          <select name="role_value" required>
+            {% for r in Role %}
+              <option value="{{ r.value }}">{{ r.value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12 actions">
+          <button class="btn" type="submit">Crear</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="hgroup">
+        <div>
+          <h3>Lista</h3>
+          <div class="subtitle">Cambiar rol por usuario. Total: {{ users|length }}.</div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Rol</th>
+              <th>Activo</th>
+              <th>ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+              <tr>
+                <td>{{ u.username }}</td>
+                <td>
+                  <form method="post" action="/dashboard/users/{{ u.id }}/role" class="actions">
+                    <select name="role_value" style="min-width: 220px;">
+                      {% for r in Role %}
+                        <option value="{{ r.value }}" {% if u.role.value == r.value %}selected{% endif %}>{{ r.value }}</option>
+                      {% endfor %}
+                    </select>
+                    <button class="btn secondary" type="submit">Guardar</button>
+                  </form>
+                </td>
+                <td>{{ "Sí" if u.is_active else "No" }}</td>
+                <td class="help">{{ u.id }}</td>
+              </tr>
+            {% endfor %}
+
+            {% if users|length == 0 %}
+              <tr>
+                <td colspan="4" class="help">No hay usuarios registrados.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

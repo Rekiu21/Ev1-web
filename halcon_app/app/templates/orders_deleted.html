@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="stack">
+    <div class="card">
+      <div class="hgroup">
+        <div>
+          <h2>Pedidos eliminados</h2>
+          <div class="subtitle">Aquí se muestran pedidos con borrado lógico.</div>
+        </div>
+        <div class="actions">
+          <a class="btn secondary" href="/dashboard/orders">Volver a pedidos</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>No. Factura</th>
+              <th>No. Cliente</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in orders %}
+              <tr>
+                <td>{{ o.invoice_number }}</td>
+                <td>{{ o.customer_number }}</td>
+                <td style="white-space: normal; min-width: 220px;">{{ o.customer_name }}</td>
+                <td>{{ o.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                  <div class="actions">
+                    <a class="btn secondary" href="/dashboard/deleted/{{ o.id }}">Editar</a>
+                    <form method="post" action="/dashboard/deleted/{{ o.id }}/restore" style="display:inline;" onsubmit="return confirm('¿Restaurar este pedido?');">
+                      <button class="btn" type="submit">Restaurar</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+            {% if orders|length == 0 %}
+              <tr><td colspan="5" class="help">No hay pedidos eliminados.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

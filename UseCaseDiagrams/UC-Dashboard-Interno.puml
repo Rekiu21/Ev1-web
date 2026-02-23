@@ -1,0 +1,91 @@
+@startuml
+title Halcón - Casos de Uso (Dashboard Interno)
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Empleado" as Emp
+actor "Administrador" as Admin
+actor "Ventas" as Sales
+actor "Compras" as Purchasing
+actor "Almacén" as Warehouse
+actor "Ruta" as Route
+
+Sales --|> Emp
+Purchasing --|> Emp
+Warehouse --|> Emp
+Route --|> Emp
+Admin --|> Emp
+
+rectangle "Web App Halcón (Dashboard)" {
+  usecase "Iniciar sesión" as UC_Login
+
+  package "Gestión de usuarios" {
+    usecase "Registrar usuario" as UC_AddUser
+    usecase "Asignar rol\n(departamento)" as UC_AssignRole
+  }
+
+  package "Gestión de pedidos" {
+    usecase "Listar pedidos" as UC_List
+    usecase "Buscar pedidos" as UC_Search
+    usecase "Ver detalle de pedido" as UC_View
+
+    usecase "Registrar pedido" as UC_Create
+    usecase "Modificar pedido" as UC_Edit
+    usecase "Eliminar pedido\n(lógico)" as UC_SoftDelete
+
+    usecase "Ver pedidos eliminados" as UC_ListDeleted
+    usecase "Editar pedido eliminado" as UC_EditDeleted
+    usecase "Restaurar pedido" as UC_Restore
+  }
+
+  package "Ciclo de vida / Evidencias" {
+    usecase "Cambiar estatus a\nOrdered" as UC_StatusOrdered
+    usecase "Cambiar estatus a\nIn process" as UC_StatusInProcess
+    usecase "Cambiar estatus a\nIn route" as UC_StatusInRoute
+    usecase "Subir foto de unidad\n(cargada)" as UC_UploadLoaded
+    usecase "Subir foto evidencia\n(entrega)" as UC_UploadDelivered
+    usecase "Cambiar estatus a\nDelivered" as UC_StatusDelivered
+  }
+
+  package "Abasto" {
+    usecase "Reportar material\nno existente / bajo stock" as UC_ReportStock
+    usecase "Gestionar adquisición\n(material faltante)" as UC_BuyMissing
+  }
+}
+
+Emp --> UC_Login
+Emp --> UC_List
+UC_List ..> UC_Search : <<include>>
+UC_List ..> UC_View : <<include>>
+
+Sales --> UC_Create
+Sales --> UC_Edit
+Sales --> UC_SoftDelete
+Sales --> UC_ListDeleted
+Sales --> UC_EditDeleted
+Sales --> UC_Restore
+
+Admin --> UC_AddUser
+Admin --> UC_AssignRole
+
+Warehouse --> UC_StatusInProcess
+Warehouse --> UC_StatusInRoute
+Warehouse --> UC_ReportStock
+
+Purchasing --> UC_BuyMissing
+UC_ReportStock ..> UC_BuyMissing : <<include>>
+
+Route --> UC_UploadLoaded
+Route --> UC_UploadDelivered
+Route --> UC_StatusDelivered
+
+UC_Create ..> UC_StatusOrdered : <<include>>
+UC_UploadDelivered ..> UC_StatusDelivered : <<include>>
+
+note right of UC_UploadLoaded
+  La opción de subir fotos
+  solo debe ser visible para
+  el departamento Ruta.
+end note
+
+@enduml

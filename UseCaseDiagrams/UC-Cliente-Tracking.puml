@@ -1,0 +1,28 @@
+@startuml
+title Halcón - Casos de Uso (Cliente)
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Cliente" as Cliente
+
+rectangle "Web App Halcón" {
+  usecase "Consultar estado\n de pedido" as UC_Consultar
+  usecase "Ingresar No. Cliente" as UC_NoCliente
+  usecase "Ingresar No. Factura" as UC_NoFactura
+  usecase "Ver estatus" as UC_Estatus
+  usecase "Ver evidencia\n de entrega (foto)" as UC_Evidencia
+}
+
+Cliente --> UC_Consultar
+
+UC_Consultar ..> UC_NoCliente : <<include>>
+UC_Consultar ..> UC_NoFactura : <<include>>
+UC_Consultar ..> UC_Estatus : <<include>>
+
+UC_Evidencia ..> UC_Estatus : <<extend>>
+note right of UC_Evidencia
+  Solo aplica si el estatus es
+  "Delivered".
+end note
+
+@enduml

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <div class="hgroup">
+      <div>
+        <h2>Editar pedido eliminado</h2>
+        <div class="subtitle">Pedido #{{ order.id }} (borrado lógico)</div>
+      </div>
+      <div class="actions">
+        <a class="btn secondary" href="/dashboard/deleted">Volver</a>
+      </div>
+    </div>
+
+    <div style="height:14px"></div>
+
+    <form method="post" action="/dashboard/deleted/{{ order.id }}/edit" class="grid">
+      <div class="col-6">
+        <label>No. Factura</label>
+        <input name="invoice_number" value="{{ order.invoice_number }}" required />
+      </div>
+      <div class="col-6">
+        <label>No. Cliente</label>
+        <input name="customer_number" value="{{ order.customer_number }}" required />
+      </div>
+
+      <div class="col-12">
+        <label>Nombre / Razón social</label>
+        <input name="customer_name" value="{{ order.customer_name }}" required />
+      </div>
+
+      <div class="col-6">
+        <label>Datos fiscales</label>
+        <textarea name="fiscal_data" required>{{ order.fiscal_data }}</textarea>
+      </div>
+
+      <div class="col-6">
+        <label>Dirección de entrega</label>
+        <textarea name="delivery_address" required>{{ order.delivery_address }}</textarea>
+      </div>
+
+      <div class="col-12">
+        <label>Notas</label>
+        <textarea name="notes">{{ order.notes }}</textarea>
+      </div>
+
+      <div class="col-12 actions">
+        <button class="btn" type="submit">Guardar cambios</button>
+      </div>
+    </form>
+
+    <div style="height:12px"></div>
+    <form method="post" action="/dashboard/deleted/{{ order.id }}/restore" onsubmit="return confirm('¿Restaurar este pedido?');">
+      <button class="btn secondary" type="submit">Restaurar</button>
+    </form>
+  </div>
+{% endblock %}

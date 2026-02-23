@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="center">
+    <div class="card">
+      <div class="hgroup">
+        <div>
+          <h2>Login - Dashboard</h2>
+          <div class="subtitle">Acceso solo para personal interno.</div>
+        </div>
+      </div>
+
+      {% if error %}
+        <div style="height:12px"></div>
+        <div class="error">{{ error }}</div>
+      {% endif %}
+
+      <div style="height:14px"></div>
+      <form method="post" action="/login" class="stack">
+        <div>
+          <label>Usuario</label>
+          <input name="username" required />
+        </div>
+        <div>
+          <label>Contraseña</label>
+          <input name="password" type="password" required />
+        </div>
+        <div class="actions">
+          <button class="btn" type="submit">Entrar</button>
+          <a class="btn secondary" href="/">Ir a seguimiento</a>
+        </div>
+      </form>
+
+      <div class="footer-note">Usuario inicial: <b>admin</b> / <b>admin123</b></div>
+    </div>
+  </div>
+{% endblock %}
