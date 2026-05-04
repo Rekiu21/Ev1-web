@@ -1,0 +1,24 @@
+# Configuración para Halcón en Hostinger
+
+# Habilitar rewriteengine
+RewriteEngine On
+
+# Forzar HTTPS en rekiu.com
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} ^rekiu\.com$ [NC]
+RewriteRule ^ https://rekiu.com%{REQUEST_URI} [R=301,L]
+
+# Bloquear acceso directo a archivos sensibles
+RewriteRule "^\.env" - [F]
+RewriteRule "^config\.php" - [F]
+RewriteRule "^functions\.php" - [F]
+RewriteRule "^\.git" - [F]
+RewriteRule "^db\.sql" - [F]
+
+# Permitir directorios y archivos existentes
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirigir todo lo demás a index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
